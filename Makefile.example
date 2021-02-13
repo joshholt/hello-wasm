@@ -1,0 +1,23 @@
+server.key server.crt:
+	openssl req -config /Users/joshholt/.config/ssl/openssl.conf -new -x509 -sha256 -newkey rsa:2048 -nodes -days 1000 -keyout server.key -out server.crt
+
+certs: server.key server.crt
+
+clean:
+	rm -rf web hello-wasm web.gen.go
+
+wasm:
+	GOARCH=wasm GOOS=js go build -o web/app.wasm
+
+static: wasm
+	cp -r static/** web/.
+
+web.gen.go: static
+	go generate ./...
+	rm -rf web
+
+build: clean certs web.gen.go
+	go build
+	
+run: build
+	./hello-wasm

@@ -1,0 +1,6 @@
+web/
+hello-wasm
+web.gen.go
+server.crt
+server.key
+Makefile
